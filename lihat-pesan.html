@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Lihat Pesan & Kesan 💌</title>
   <style>
-    /* 🌈 Gaya umum */
     body {
       font-family: 'Poppins', sans-serif;
       background: linear-gradient(135deg, #1f1c2c, #928dab);
@@ -16,93 +15,99 @@
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-      justify-content: flex-start;
       align-items: center;
     }
 
     h2 {
-      font-size: 1.7rem;
-      margin: 20px 0;
+      font-size: 1.8rem;
       color: #ffda79;
-      text-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+      margin-bottom: 20px;
+      text-shadow: 0 2px 6px rgba(0,0,0,0.3);
     }
 
     #messages {
+      width: 100%;
+      max-width: 700px;
       display: flex;
       flex-direction: column;
       align-items: center;
-      width: 100%;
-      max-width: 650px;
     }
 
-    /* 📨 Kartu tiap pesan */
     .person {
-      background: rgba(255, 255, 255, 0.12);
-      backdrop-filter: blur(10px);
-      border-radius: 18px;
-      margin: 15px 0;
+      border-radius: 16px;
+      margin: 14px 0;
       padding: 18px;
       width: 90%;
-      box-shadow: 0 0 10px rgba(255,255,255,0.15);
-      transition: transform 0.25s ease, background 0.3s ease;
+      box-shadow: 0 0 15px rgba(0,0,0,0.2);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      color: #333;
+      background: white;
       text-align: left;
-      overflow-wrap: break-word;
       word-break: break-word;
     }
 
     .person:hover {
       transform: scale(1.02);
-      background: rgba(255, 255, 255, 0.18);
+      box-shadow: 0 0 20px rgba(255,255,255,0.2);
     }
 
     .name {
       font-weight: 700;
-      color: #ffda79;
       font-size: 1.2rem;
       margin-bottom: 8px;
     }
 
     .label {
-      color: #ffda79;
       font-weight: 600;
       margin-top: 10px;
       display: block;
-      font-size: 0.95rem;
     }
 
     .message, .impression {
       font-size: 1rem;
-      color: #f8f8f8;
-      background: rgba(255, 255, 255, 0.05);
+      background: rgba(255,255,255,0.4);
       border-radius: 10px;
-      padding: 10px 12px;
+      padding: 8px 10px;
       margin-top: 5px;
       line-height: 1.5;
       white-space: pre-wrap;
     }
 
-    footer {
-      margin-top: 30px;
-      color: #ddd;
+    .buttons {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    button {
+      border: none;
+      color: white;
+      border-radius: 8px;
+      padding: 8px 12px;
+      cursor: pointer;
       font-size: 0.9rem;
+      transition: transform 0.2s ease, opacity 0.3s ease;
+    }
+
+    button:hover {
+      transform: scale(1.05);
+      opacity: 0.9;
+    }
+
+    footer {
+      margin-top: 25px;
+      font-size: 0.9rem;
+      color: #ddd;
       padding-bottom: 10px;
     }
 
-    /* 📱 Responsif untuk HP */
     @media (max-width: 600px) {
-      h2 {
-        font-size: 1.4rem;
-      }
-      .person {
-        width: 95%;
-        padding: 15px;
-      }
-      .name {
-        font-size: 1.1rem;
-      }
-      .message, .impression {
-        font-size: 0.95rem;
-      }
+      h2 { font-size: 1.4rem; }
+      .person { width: 95%; padding: 15px; }
+      .name { font-size: 1.1rem; }
+      .message, .impression { font-size: 0.95rem; }
+      button { font-size: 0.85rem; padding: 7px 10px; }
     }
   </style>
 </head>
@@ -112,8 +117,14 @@
   <footer>💗 QnA Anonim - Mandusi 2025 💗</footer>
 
   <script>
-    // 🔗 Ganti link CSV di bawah dengan link Sheet kamu
+    // 🔗 Ganti dengan URL CSV kamu dari Google Sheets (mode "Publish to web" > CSV)
     const sheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vS4TM31-o_JeOx7sLGI_6361vQNNaFOj7fKzhTGr_klzPSmgURFKmBkaCwUAUQcevOVW4Mmz2Rx0wJb/pub?output=csv";
+
+    // 🎨 Warna lembut untuk tiap kartu
+    const pastelColors = [
+      "#FFB6C1", "#FFDAB9", "#E6E6FA", "#B0E0E6", "#F0E68C",
+      "#98FB98", "#FFA07A", "#D8BFD8", "#AFEEEE", "#FFFACD"
+    ];
 
     fetch(sheetUrl)
       .then(response => response.text())
@@ -122,20 +133,31 @@
         const container = document.getElementById("messages");
         container.innerHTML = "";
 
-        rows.forEach((row) => {
+        rows.forEach((row, index) => {
           const cols = row.split(",");
-          if (cols.length >= 4) { // Timestamp, Nama, Pesan, Kesan
+          if (cols.length >= 4) {
             const nama = cols[1]?.trim() || "Anonim";
             const pesan = cols[2]?.trim() || "";
             const kesan = cols[3]?.trim() || "";
 
             if (pesan || kesan) {
+              // 🎨 Ambil warna acak dari daftar pastel
+              const color = pastelColors[index % pastelColors.length];
+              const textShare = `💌 Pesan untuk ${nama}\n\n📩 ${pesan}\n💭 ${kesan}\n\n#PesanKesanMandusi2025`;
+              const encoded = encodeURIComponent(textShare);
+              const waLink = `https://wa.me/?text=${encoded}`;
+
               const personDiv = document.createElement("div");
               personDiv.className = "person";
+              personDiv.style.background = color;
               personDiv.innerHTML = `
                 <div class="name">👤 ${nama}</div>
                 ${pesan ? `<div class="label">Pesan:</div><div class="message">${pesan}</div>` : ""}
                 ${kesan ? `<div class="label">Kesan:</div><div class="impression">${kesan}</div>` : ""}
+                <div class="buttons">
+                  <button style="background:#25D366" onclick="window.open('${waLink}','_blank')">📤 WA Story</button>
+                  <button style="background:#E1306C" onclick="copyText('${textShare.replace(/'/g, "\\'")}')">📋 IG Story</button>
+                </div>
               `;
               container.appendChild(personDiv);
             }
@@ -150,6 +172,12 @@
         document.getElementById("messages").innerHTML = "Gagal memuat data 😢";
         console.error(err);
       });
+
+    function copyText(text) {
+      navigator.clipboard.writeText(text)
+        .then(() => alert("Teks disalin! Tempelkan di story IG kamu 🩷"))
+        .catch(() => alert("Gagal menyalin teks 😢"));
+    }
   </script>
 </body>
 </html>
