@@ -5,71 +5,104 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Lihat Pesan & Kesan 💌</title>
   <style>
+    /* 🌈 Gaya umum */
     body {
       font-family: 'Poppins', sans-serif;
       background: linear-gradient(135deg, #1f1c2c, #928dab);
       color: white;
       margin: 0;
-      padding: 30px 10px;
+      padding: 20px;
       text-align: center;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: center;
     }
 
     h2 {
-      font-size: 26px;
-      margin-bottom: 20px;
+      font-size: 1.7rem;
+      margin: 20px 0;
       color: #ffda79;
-    }
-
-    .person {
-      background: rgba(255, 255, 255, 0.12);
-      backdrop-filter: blur(10px);
-      border-radius: 20px;
-      margin: 20px auto;
-      padding: 20px;
-      max-width: 600px;
-      box-shadow: 0 0 15px rgba(255,255,255,0.2);
-      transition: transform 0.3s ease;
-    }
-
-    .person:hover {
-      transform: scale(1.02);
-    }
-
-    .name {
-      font-weight: 700;
-      color: #ffda79;
-      font-size: 20px;
-      margin-bottom: 10px;
-    }
-
-    .message, .impression {
-      font-size: 16px;
-      color: #f8f8f8;
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 10px;
-      padding: 10px;
-      margin-top: 5px;
-      white-space: pre-wrap;
-      text-align: left;
-    }
-
-    .label {
-      color: #ffda79;
-      font-weight: 600;
-      margin-top: 8px;
-      display: block;
+      text-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
     }
 
     #messages {
       display: flex;
       flex-direction: column;
       align-items: center;
+      width: 100%;
+      max-width: 650px;
+    }
+
+    /* 📨 Kartu tiap pesan */
+    .person {
+      background: rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(10px);
+      border-radius: 18px;
+      margin: 15px 0;
+      padding: 18px;
+      width: 90%;
+      box-shadow: 0 0 10px rgba(255,255,255,0.15);
+      transition: transform 0.25s ease, background 0.3s ease;
+      text-align: left;
+      overflow-wrap: break-word;
+      word-break: break-word;
+    }
+
+    .person:hover {
+      transform: scale(1.02);
+      background: rgba(255, 255, 255, 0.18);
+    }
+
+    .name {
+      font-weight: 700;
+      color: #ffda79;
+      font-size: 1.2rem;
+      margin-bottom: 8px;
+    }
+
+    .label {
+      color: #ffda79;
+      font-weight: 600;
+      margin-top: 10px;
+      display: block;
+      font-size: 0.95rem;
+    }
+
+    .message, .impression {
+      font-size: 1rem;
+      color: #f8f8f8;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+      padding: 10px 12px;
+      margin-top: 5px;
+      line-height: 1.5;
+      white-space: pre-wrap;
     }
 
     footer {
-      margin-top: 40px;
+      margin-top: 30px;
       color: #ddd;
-      font-size: 14px;
+      font-size: 0.9rem;
+      padding-bottom: 10px;
+    }
+
+    /* 📱 Responsif untuk HP */
+    @media (max-width: 600px) {
+      h2 {
+        font-size: 1.4rem;
+      }
+      .person {
+        width: 95%;
+        padding: 15px;
+      }
+      .name {
+        font-size: 1.1rem;
+      }
+      .message, .impression {
+        font-size: 0.95rem;
+      }
     }
   </style>
 </head>
@@ -79,6 +112,7 @@
   <footer>💗 QnA Anonim - Mandusi 2025 💗</footer>
 
   <script>
+    // 🔗 Ganti link CSV di bawah dengan link Sheet kamu
     const sheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vS4TM31-o_JeOx7sLGI_6361vQNNaFOj7fKzhTGr_klzPSmgURFKmBkaCwUAUQcevOVW4Mmz2Rx0wJb/pub?output=csv";
 
     fetch(sheetUrl)
@@ -90,12 +124,12 @@
 
         rows.forEach((row) => {
           const cols = row.split(",");
-          if (cols.length >= 4) { // ada Nama, Pesan, dan Kesan
+          if (cols.length >= 4) { // Timestamp, Nama, Pesan, Kesan
             const nama = cols[1]?.trim() || "Anonim";
             const pesan = cols[2]?.trim() || "";
             const kesan = cols[3]?.trim() || "";
 
-            if (pesan !== "" || kesan !== "") {
+            if (pesan || kesan) {
               const personDiv = document.createElement("div");
               personDiv.className = "person";
               personDiv.innerHTML = `
