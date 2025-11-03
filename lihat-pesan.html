@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pesan Anonim 💬</title>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #1f1c2c, #928dab);
+      color: white;
+      text-align: center;
+      padding: 20px;
+    }
+    h2 {
+      margin-bottom: 20px;
+    }
+    .message {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(8px);
+      border-radius: 15px;
+      padding: 15px;
+      margin: 10px auto;
+      max-width: 500px;
+      box-shadow: 0 0 15px rgba(255,255,255,0.2);
+    }
+    .name {
+      font-weight: bold;
+      color: #ffda79;
+    }
+  </style>
+</head>
+<body>
+  <h2>💌 Pesan Masuk 💌</h2>
+  <div id="messages">Memuat data...</div>
+
+  <script>
+    const sheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vS4TM31-o_JeOx7sLGI_6361vQNNaFOj7fKzhTGr_klzPSmgURFKmBkaCwUAUQcevOVW4Mmz2Rx0wJb/pubhtml"; // 🔗 Ganti dengan URL CSV kamu
+
+    fetch(sheetUrl)
+      .then(response => response.text())
+      .then(csv => {
+        const rows = csv.split("\n").slice(1); // lewati header
+        const container = document.getElementById("messages");
+        container.innerHTML = "";
+
+        rows.forEach(row => {
+          const cols = row.split(",");
+          if (cols.length >= 3) {
+            const nama = cols[1] || "Anonim";
+            const pesan = cols[2] || "";
+            if (pesan.trim() !== "") {
+              const div = document.createElement("div");
+              div.className = "message";
+              div.innerHTML = `
+                <div class="name">${nama}</div>
+                <div class="text">${pesan}</div>
+              `;
+              container.appendChild(div);
+            }
+          }
+        });
+      })
+      .catch(err => {
+        document.getElementById("messages").innerHTML = "Gagal memuat data 😢";
+        console.error(err);
+      });
+  </script>
+</body>
+</html>
