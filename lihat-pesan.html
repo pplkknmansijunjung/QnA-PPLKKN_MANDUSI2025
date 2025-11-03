@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lihat Pesan & Kesan 💌</title>
+  <title>Pesan & Kesan 💌</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <style>
     body {
       font-family: 'Poppins', sans-serif;
@@ -12,10 +13,6 @@
       margin: 0;
       padding: 20px;
       text-align: center;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
     }
 
     h2 {
@@ -26,8 +23,6 @@
     }
 
     #messages {
-      width: 100%;
-      max-width: 700px;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -35,21 +30,18 @@
 
     .person {
       border-radius: 16px;
-      margin: 14px 0;
+      margin: 15px 0;
       padding: 18px;
       width: 90%;
-      box-shadow: 0 0 15px rgba(0,0,0,0.2);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-      color: #333;
-      background: white;
+      max-width: 500px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.25);
+      transition: transform 0.3s ease;
       text-align: left;
       word-break: break-word;
+      color: #333;
     }
 
-    .person:hover {
-      transform: scale(1.02);
-      box-shadow: 0 0 20px rgba(255,255,255,0.2);
-    }
+    .person:hover { transform: scale(1.02); }
 
     .name {
       font-weight: 700;
@@ -96,87 +88,86 @@
     }
 
     footer {
-      margin-top: 25px;
+      margin-top: 30px;
       font-size: 0.9rem;
       color: #ddd;
-      padding-bottom: 10px;
     }
 
     @media (max-width: 600px) {
       h2 { font-size: 1.4rem; }
       .person { width: 95%; padding: 15px; }
       .name { font-size: 1.1rem; }
-      .message, .impression { font-size: 0.95rem; }
       button { font-size: 0.85rem; padding: 7px 10px; }
     }
   </style>
 </head>
 <body>
-  <h2>Pesan & Kesan yang Masuk 💬</h2>
+  <h2>Pesan & Kesan 💬</h2>
   <div id="messages">Memuat data...</div>
   <footer>💗 QnA Anonim - Mandusi 2025 💗</footer>
 
   <script>
-    // 🔗 Ganti dengan URL CSV kamu dari Google Sheets (mode "Publish to web" > CSV)
     const sheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vS4TM31-o_JeOx7sLGI_6361vQNNaFOj7fKzhTGr_klzPSmgURFKmBkaCwUAUQcevOVW4Mmz2Rx0wJb/pub?output=csv";
-
-    // 🎨 Warna lembut untuk tiap kartu
-    const pastelColors = [
-      "#FFB6C1", "#FFDAB9", "#E6E6FA", "#B0E0E6", "#F0E68C",
-      "#98FB98", "#FFA07A", "#D8BFD8", "#AFEEEE", "#FFFACD"
-    ];
+    const pastelColors = ["#FFB6C1","#FFDAB9","#E6E6FA","#B0E0E6","#F0E68C","#98FB98","#FFA07A","#D8BFD8","#AFEEEE","#FFFACD"];
 
     fetch(sheetUrl)
-      .then(response => response.text())
+      .then(res => res.text())
       .then(csv => {
         const rows = csv.split("\n").slice(1);
         const container = document.getElementById("messages");
         container.innerHTML = "";
 
-        rows.forEach((row, index) => {
+        rows.forEach((row, i) => {
           const cols = row.split(",");
           if (cols.length >= 4) {
             const nama = cols[1]?.trim() || "Anonim";
             const pesan = cols[2]?.trim() || "";
             const kesan = cols[3]?.trim() || "";
-
             if (pesan || kesan) {
-              // 🎨 Ambil warna acak dari daftar pastel
-              const color = pastelColors[index % pastelColors.length];
-              const textShare = `💌 Pesan untuk ${nama}\n\n📩 ${pesan}\n💭 ${kesan}\n\n#PesanKesanMandusi2025`;
-              const encoded = encodeURIComponent(textShare);
-              const waLink = `https://wa.me/?text=${encoded}`;
-
-              const personDiv = document.createElement("div");
-              personDiv.className = "person";
-              personDiv.style.background = color;
-              personDiv.innerHTML = `
+              const color = pastelColors[i % pastelColors.length];
+              const card = document.createElement("div");
+              card.className = "person";
+              card.style.background = color;
+              card.innerHTML = `
                 <div class="name">👤 ${nama}</div>
                 ${pesan ? `<div class="label">Pesan:</div><div class="message">${pesan}</div>` : ""}
                 ${kesan ? `<div class="label">Kesan:</div><div class="impression">${kesan}</div>` : ""}
                 <div class="buttons">
-                  <button style="background:#25D366" onclick="window.open('${waLink}','_blank')">📤 WA Story</button>
-                  <button style="background:#E1306C" onclick="copyText('${textShare.replace(/'/g, "\\'")}')">📋 IG Story</button>
+                  <button style="background:#25D366" onclick="shareCard(this, 'wa')">📤 Share WA</button>
+                  <button style="background:#E1306C" onclick="shareCard(this, 'ig')">📸 IG Story</button>
                 </div>
               `;
-              container.appendChild(personDiv);
+              container.appendChild(card);
             }
           }
         });
-
-        if (container.innerHTML.trim() === "") {
-          container.innerHTML = "Belum ada pesan masuk 😢";
-        }
-      })
-      .catch(err => {
-        document.getElementById("messages").innerHTML = "Gagal memuat data 😢";
-        console.error(err);
       });
 
-    function copyText(text) {
-      navigator.clipboard.writeText(text)
-        .then(() => alert("Teks disalin! Tempelkan di story IG kamu 🩷"))
-        .catch(() => alert("Gagal menyalin teks 😢"));
+    async function shareCard(btn, platform) {
+      const card = btn.closest(".person");
+
+      // ambil gambar kartu
+      const canvas = await html2canvas(card, { scale: 2 });
+      const imgData = canvas.toDataURL("image/png");
+
+      // buat blob untuk dibagikan
+      const blob = await (await fetch(imgData)).blob();
+      const file = new File([blob], "pesan_kesan.png", { type: "image/png" });
+
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({
+          files: [file],
+          title: "Pesan & Kesan 💌",
+          text: "Lihat pesan spesial ini 💖"
+        });
+      } else {
+        // fallback — jika device tidak mendukung API share
+        const link = document.createElement("a");
+        link.href = imgData;
+        link.download = "pesan_kesan.png";
+        link.click();
+        alert("Gambar disimpan. Unggah manual ke WA / IG Story 💕");
+      }
     }
   </script>
 </body>
