@@ -3,66 +3,127 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AnonimChat💌</title>
+  <title>QnA PPL-KKN MANDUSI 2025 💌</title>
+  <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/4206/4206277.png">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
   <style>
+    /* Reset dasar */
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       font-family: 'Poppins', sans-serif;
-      background: linear-gradient(135deg, #1f1c2c, #928dab);
-      color: white;
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      background: url('https://images.unsplash.com/photo-1507842217343-583bb7270b66?auto=format&fit=crop&w=1600&q=80') no-repeat center center/cover;
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
-      height: 100vh;
-      margin: 0;
       text-align: center;
+      color: white;
+      overflow: hidden;
     }
+
+    /* Lapisan gelap lembut di atas background agar teks terlihat jelas */
+    body::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.45);
+      z-index: 0;
+    }
+
     .container {
-      background: rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(10px);
-      padding: 30px;
+      position: relative;
+      z-index: 1;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(15px);
+      padding: 30px 25px;
       border-radius: 20px;
       width: 90%;
-      max-width: 400px;
-      box-shadow: 0 0 20px rgba(255,255,255,0.2);
+      max-width: 420px;
+      box-shadow: 0 0 30px rgba(255, 255, 255, 0.2);
+      animation: fadeIn 1s ease;
     }
+
+    @keyframes fadeIn {
+      from {opacity: 0; transform: translateY(20px);}
+      to {opacity: 1; transform: translateY(0);}
+    }
+
+    h2 {
+      font-weight: 600;
+      margin-bottom: 15px;
+      color: #fff;
+    }
+
     input, textarea {
       width: 100%;
-      padding: 10px;
+      padding: 12px;
       margin-top: 10px;
       border: none;
-      border-radius: 10px;
-      font-size: 16px;
+      border-radius: 12px;
+      font-size: 15px;
+      outline: none;
+      resize: none;
+      background: rgba(255, 255, 255, 0.8);
+      color: #333;
     }
+
+    input::placeholder, textarea::placeholder {
+      color: #666;
+    }
+
     button {
-      background: linear-gradient(to right, #ff3cac, #784ba0, #2b86c5);
+      background: linear-gradient(90deg, #ff3cac, #784ba0, #2b86c5);
       color: white;
       border: none;
-      padding: 12px 20px;
+      padding: 12px 25px;
       border-radius: 10px;
-      font-size: 18px;
+      font-size: 16px;
       cursor: pointer;
       margin-top: 15px;
-      transition: 0.3s;
+      transition: transform 0.3s, box-shadow 0.3s;
     }
+
     button:hover {
       transform: scale(1.05);
+      box-shadow: 0 0 15px rgba(255,255,255,0.3);
+    }
+
+    #msg {
+      display: none;
+      margin-top: 12px;
+      color: #00ffcc;
+      font-weight: 600;
+    }
+
+    /* Responsif untuk layar kecil (HP) */
+    @media (max-width: 480px) {
+      .container {
+        padding: 25px 20px;
+      }
+      h2 {
+        font-size: 20px;
+      }
+      button {
+        font-size: 15px;
+      }
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h2>Kirim bo di au Pesan Anonim 💌</h2>
-
-    <!-- Ganti URL di bawah dengan URL formResponse kamu -->
+    <h2>Kirim Pesanmu 💌</h2>
     <form id="anonForm">
-      <input type="text" name="entry.1835358152" placeholder="Nama Kamu (*boleh simbol Kalo mau anonim)" required>
-      <textarea name="entry.1670154252" placeholder="Pendapatmu tentang saya..." required></textarea>
-      <textarea name="entry.1230027120" placeholder="Pendapatmu tentang saya..." required></textarea>
-      <button type="submit">Kirim Ma dah 🚀</button>
+      <input type="text" name="entry.1835358152" placeholder="Nama Kamu" required>
+      <textarea name="entry.1670154252" placeholder="Pertanyaan Buat Guru PL (*Jangan Lupa Namanya Ya..)" required></textarea>
+      <textarea name="entry.1230027120" placeholder="Pesan dan Kesan" required></textarea>
+      <button type="submit">Kirim Aja 🚀</button>
     </form>
-
-    <p id="msg" style="display:none; margin-top:10px;">Pesanmu terkirim, TerimoKasih dah💖</p>
+    <p id="msg">Pesanmu terkirim, Terimakasih (O iya jangan lupa buat ke semua guru PL-nya ya) 💖</p>
   </div>
 
   <script>
@@ -70,7 +131,6 @@
       e.preventDefault();
       const data = new FormData(e.target);
 
-      // ⚠️ Ganti URL ini dengan URL formResponse kamu
       const url = "https://docs.google.com/forms/d/e/1FAIpQLSey1oLz2ihA-xhQVZAumU68s_WHK40TJ96sLWp8H-wAVI_H0Q/formResponse";
 
       await fetch(url, {
