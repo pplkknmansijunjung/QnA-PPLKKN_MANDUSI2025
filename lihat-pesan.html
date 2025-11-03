@@ -42,7 +42,7 @@
       margin-bottom: 10px;
     }
 
-    .message {
+    .message, .impression {
       font-size: 16px;
       color: #f8f8f8;
       background: rgba(255, 255, 255, 0.05);
@@ -50,6 +50,14 @@
       padding: 10px;
       margin-top: 5px;
       white-space: pre-wrap;
+      text-align: left;
+    }
+
+    .label {
+      color: #ffda79;
+      font-weight: 600;
+      margin-top: 8px;
+      display: block;
     }
 
     #messages {
@@ -71,28 +79,29 @@
   <footer>💗 QnA Anonim - Mandusi 2025 💗</footer>
 
   <script>
-    // Ganti URL berikut dengan LINK CSV dari Google Sheet kamu
     const sheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vS4TM31-o_JeOx7sLGI_6361vQNNaFOj7fKzhTGr_klzPSmgURFKmBkaCwUAUQcevOVW4Mmz2Rx0wJb/pub?output=csv";
 
     fetch(sheetUrl)
       .then(response => response.text())
       .then(csv => {
-        const rows = csv.split("\n").slice(1); // lewati header baris pertama
+        const rows = csv.split("\n").slice(1);
         const container = document.getElementById("messages");
         container.innerHTML = "";
 
-        rows.forEach((row, index) => {
+        rows.forEach((row) => {
           const cols = row.split(",");
-          if (cols.length >= 3) {
+          if (cols.length >= 4) { // ada Nama, Pesan, dan Kesan
             const nama = cols[1]?.trim() || "Anonim";
             const pesan = cols[2]?.trim() || "";
+            const kesan = cols[3]?.trim() || "";
 
-            if (pesan !== "") {
+            if (pesan !== "" || kesan !== "") {
               const personDiv = document.createElement("div");
               personDiv.className = "person";
               personDiv.innerHTML = `
                 <div class="name">👤 ${nama}</div>
-                <div class="message">${pesan}</div>
+                ${pesan ? `<div class="label">Pesan:</div><div class="message">${pesan}</div>` : ""}
+                ${kesan ? `<div class="label">Kesan:</div><div class="impression">${kesan}</div>` : ""}
               `;
               container.appendChild(personDiv);
             }
