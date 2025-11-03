@@ -3,63 +3,105 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pesan Anonim 💬</title>
+  <title>Lihat Pesan & Kesan 💌</title>
   <style>
     body {
       font-family: 'Poppins', sans-serif;
       background: linear-gradient(135deg, #1f1c2c, #928dab);
       color: white;
+      margin: 0;
+      padding: 30px 10px;
       text-align: center;
-      padding: 20px;
     }
+
     h2 {
+      font-size: 26px;
       margin-bottom: 20px;
-    }
-    .message {
-      background: rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(8px);
-      border-radius: 15px;
-      padding: 15px;
-      margin: 10px auto;
-      max-width: 500px;
-      box-shadow: 0 0 15px rgba(255,255,255,0.2);
-    }
-    .name {
-      font-weight: bold;
       color: #ffda79;
+    }
+
+    .person {
+      background: rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      margin: 20px auto;
+      padding: 20px;
+      max-width: 600px;
+      box-shadow: 0 0 15px rgba(255,255,255,0.2);
+      transition: transform 0.3s ease;
+    }
+
+    .person:hover {
+      transform: scale(1.02);
+    }
+
+    .name {
+      font-weight: 700;
+      color: #ffda79;
+      font-size: 20px;
+      margin-bottom: 10px;
+    }
+
+    .message {
+      font-size: 16px;
+      color: #f8f8f8;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+      padding: 10px;
+      margin-top: 5px;
+      white-space: pre-wrap;
+    }
+
+    #messages {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    footer {
+      margin-top: 40px;
+      color: #ddd;
+      font-size: 14px;
     }
   </style>
 </head>
 <body>
-  <h2>💌 Pesan Masuk 💌</h2>
+  <h2>Pesan & Kesan yang Masuk 💬</h2>
   <div id="messages">Memuat data...</div>
+  <footer>💗 QnA Anonim - Mandusi 2025 💗</footer>
 
   <script>
-    const sheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vS4TM31-o_JeOx7sLGI_6361vQNNaFOj7fKzhTGr_klzPSmgURFKmBkaCwUAUQcevOVW4Mmz2Rx0wJb/pub?output=csv"; // 🔗 Ganti dengan URL CSV kamu
+    // Ganti URL berikut dengan LINK CSV dari Google Sheet kamu
+    const sheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vS4TM31-o_JeOx7sLGI_6361vQNNaFOj7fKzhTGr_klzPSmgURFKmBkaCwUAUQcevOVW4Mmz2Rx0wJb/pub?output=csv";
 
     fetch(sheetUrl)
       .then(response => response.text())
       .then(csv => {
-        const rows = csv.split("\n").slice(1); // lewati header
+        const rows = csv.split("\n").slice(1); // lewati header baris pertama
         const container = document.getElementById("messages");
         container.innerHTML = "";
 
-        rows.forEach(row => {
+        rows.forEach((row, index) => {
           const cols = row.split(",");
           if (cols.length >= 3) {
-            const nama = cols[1] || "Anonim";
-            const pesan = cols[2] || "";
-            if (pesan.trim() !== "") {
-              const div = document.createElement("div");
-              div.className = "message";
-              div.innerHTML = `
-                <div class="name">${nama}</div>
-                <div class="text">${pesan}</div>
+            const nama = cols[1]?.trim() || "Anonim";
+            const pesan = cols[2]?.trim() || "";
+
+            if (pesan !== "") {
+              const personDiv = document.createElement("div");
+              personDiv.className = "person";
+              personDiv.innerHTML = `
+                <div class="name">👤 ${nama}</div>
+                <div class="message">${pesan}</div>
               `;
-              container.appendChild(div);
+              container.appendChild(personDiv);
             }
           }
         });
+
+        if (container.innerHTML.trim() === "") {
+          container.innerHTML = "Belum ada pesan masuk 😢";
+        }
       })
       .catch(err => {
         document.getElementById("messages").innerHTML = "Gagal memuat data 😢";
